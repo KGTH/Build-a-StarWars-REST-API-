@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Planet, People, Favorite_People, Favorite_Planet, Favorites
+from models import db, User, Planet, People, Favorite_People, Favorite_Planet
 #from models import Person
 
 app = Flask(__name__)
@@ -45,7 +45,7 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@app.route('/people', methods=['GET']) #obtiene todos los personajes
+@app.route('/people', methods=['GET']) #obtiene todos los personajes  
 def all_people():
     peoples = People.query.all() 
     data =[people.serialize() for people in peoples]
@@ -53,12 +53,14 @@ def all_people():
 
 @app.route('/people/<int:people_id>', methods=['GET'])
 def get_people(people_id):
-    people = People.query.filter_by(id=people_id).first()
-    if people:
+    try:
+         people = People.query.filter_by(id=people_id).first()
+    except Exception:
         return jsonify({"msg": "Character doesn´t exist"}),400
+
     return jsonify(people.serialize()),200
 
-@app.route('/planets', methods=['GET']) #obtiene todos los personajes
+@app.route('/planets', methods=['GET']) #obtiene todos los planetas
 def all_planets():
     planets = Planet.query.all() 
     data =[planet.serialize() for planet in planets]
@@ -79,7 +81,7 @@ def get_user():
 
 @app.route('/users/favorites', methods=['GET']) #pendiente de terminar 
 def all_favorites():
-    favorite = User.query.filter_by()
+    favorite = User.query.all()
     data =[favorites.serialize() for favorites in favorite ]
     return jsonify(data),200 
 
@@ -90,7 +92,7 @@ def favorite_planet():
     print("@@@@@@@@", data['id_planets'])
     print("@@@@@@@@", data['id_user'])
 
-    favoritePlanet= favorite_planet(id_user=data['id_user'], id_planets=data['id_planets'])
+    favoritePlanet= Favorite_planet(id_user=data['id_user'], id_planets=data['id_planets'])
     db.session.add(favoritePlanet)
     db.session.commit()
     if favoritePlanet():
