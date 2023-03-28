@@ -53,12 +53,11 @@ def all_people():
 
 @app.route('/people/<int:people_id>', methods=['GET'])
 def get_people(people_id):
-    try:
-         people = People.query.filter_by(id=people_id).first()
-    except Exception:
-        return jsonify({"msg": "Character doesn´t exist"}),400
+    people = People.query.filter_by(id=people_id).first()
+    if people:
+        return jsonify(people.serialize()),200
 
-    return jsonify(people.serialize()),200
+    return jsonify({"msg": "Character doesn´t exist"}),400
 
 @app.route('/planets', methods=['GET']) #obtiene todos los planetas
 def all_planets():
@@ -70,8 +69,9 @@ def all_planets():
 def get_planet(planets_id):
     planet = Planet.query.filter_by(id=planets_id).first()
     if planet:
-        return jsonify({"msg": "Character doesn´t exist"}),400
-    return jsonify(planet.serialize()),200
+        return jsonify(planet.serialize()),200
+
+    return jsonify({"msg": "Character doesn´t exist"}),400
 
 @app.route('/users', methods=['GET'])
 def get_user():
@@ -85,47 +85,46 @@ def all_favorites():
     data =[favorites.serialize() for favorites in favorite ]
     return jsonify(data),200 
 
-@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
-def favorite_planet():
+@app.route('/favorite/planet/<int:id_planets>', methods=['POST'])
+def favorite_planet(id_planets):
     data= request.json
-    print("@@@@@@@@", data)
-    print("@@@@@@@@", data['id_planets'])
-    print("@@@@@@@@", data['id_user'])
-
-    favoritePlanet= Favorite_planet(id_user=data['id_user'], id_planets=data['id_planets'])
-    db.session.add(favoritePlanet)
-    db.session.commit()
-    if favoritePlanet():
+    try:
+        favoritePlanet= Favorite_Planet(id_planets=data['id_planets'],id_user=data['id_user'])
+        db.session.add(favoritePlanet)
+        db.session.commit()
+    except Exception as e :
+        print(e)
         return jsonify({"msg": "Your favorite planet cannot be added, wrong details"}), 400
-
+   
     return jsonify({"msg": "Saved favorite planet"}), 200
 
+
 @app.route('/favorite/people/<int:people_id>', methods=['POST'])
-def favorite_people():
+def favorite_people(people_id):
     data= request.json
-    print("@@@@@@@@", data)
-    print("@@@@@@@@", data['id_peoples'])
-    print("@@@@@@@@", data['id_user'])
-
-    favoritePeople= Favorite_People(id_user=data['id_user'], id_people=data['id_peoples'])
-    db.session.add(favoritePeople)
-    db.session.commit()
-    if favoritePeople():
-        return jsonify({"msg": "Your favorite people cannot be added, wrong details"}), 400
-
+    try:
+        favoritePeople= Favorite_People(id_people=data['people_id'],id_user=data['id_user'])
+        db.session.add(favoritePeople)
+        db.session.commit()
+    except Exception as e :
+        print(e)
+        return jsonify({"msg": "Your favorite pleople cannot be added, wrong details"}), 400
+   
     return jsonify({"msg": "Saved favorite people"}), 200
 
-@app.route('/favorite/planet/<int:planet_id>',methods=['DELETE'])
+
+@app.route('/favorite/planet/<int:planet_id>',methods=['DELETE'])   #pendiente de revisar
 def delete_planet(planet_id):
-    removePlanet = favorite_planet.query.filter_by(id=planet_id).first
+    removePlanet = Favorite_Planet.query.filter_by(id=planet_id).first
     db.session.delete(removePlanet)
     db.session.commit()
     if removePlanet():
-        return jsonify({"message": "Error"}),400
+        return jsonify({"message":"Favorite planet removed"}),200
 
-    return jsonify({"message":"Favorite planet removed"}),200
+    return jsonify({"message": "Error"}),400
 
-@app.route('/favorite/people/<int:people_id>',methods=['DELETE'])
+    
+@app.route('/favorite/people/<int:people_id>',methods=['DELETE'])   #pendiente de revisar
 def delete_people(people_id):
     removePeople = favorite_planet.query.filter_by(id=people_id).first
     db.session.delete(removePeople)
