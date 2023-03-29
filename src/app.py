@@ -79,10 +79,11 @@ def get_user():
     data=[user.serialize() for user in users]
     return jsonify(data),200
 
-@app.route('/users/favorites', methods=['GET']) #pendiente de terminar 
-def all_favorites():
-    favorite = User.query.all()
-    data =[favorites.serialize() for favorites in favorite ]
+@app.route('/users/favorites/<int:id>', methods=['GET']) #pendiente de terminar 
+def all_favorites(id):
+    favorite = Favorite_People.filter_by(id=id).first()
+    people = Favorite_People.filter_by(id=id).first
+   
     return jsonify(data),200 
 
 @app.route('/favorite/planet/<int:id_planets>', methods=['POST'])
@@ -113,26 +114,32 @@ def favorite_people(people_id):
     return jsonify({"msg": "Saved favorite people"}), 200
 
 
-@app.route('/favorite/planet/<int:planet_id>',methods=['DELETE'])   #pendiente de revisar
+@app.route('/favorite/planet/<int:planet_id>',methods=['DELETE'])   
 def delete_planet(planet_id):
-    removePlanet = Favorite_Planet.query.filter_by(id=planet_id).first
-    db.session.delete(removePlanet)
-    db.session.commit()
-    if removePlanet():
+    try:
+        removePlanet = Favorite_Planet.query.filter_by(id=planet_id).first()
+        db.session.delete(removePlanet)
+        db.session.commit()
+    except Exception as e :
+        print(e)
         return jsonify({"message":"Favorite planet removed"}),200
 
     return jsonify({"message": "Error"}),400
 
     
-@app.route('/favorite/people/<int:people_id>',methods=['DELETE'])   #pendiente de revisar
+@app.route('/favorite/people/<int:people_id>',methods=['DELETE'])   
 def delete_people(people_id):
-    removePeople = favorite_planet.query.filter_by(id=people_id).first
-    db.session.delete(removePeople)
-    db.session.commit()
-    if removePeople():
-        return jsonify({"message": "Error"}),400
+    try:
+        removePeople = Favorite_People.query.filter_by(id=people_id).first()
+        db.session.delete(removePeople)
+        db.session.commit()
+    except Exception as e :
+        print(e)
+        return jsonify({"message":"Favorite people removed"}),200
+    
+    return jsonify({"message": "Error"}),400
 
-    return jsonify({"message":"Favorite people removed"}),200
+    
 
 
 

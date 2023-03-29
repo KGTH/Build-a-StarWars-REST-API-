@@ -78,11 +78,14 @@ class Favorite_Planet(db.Model):
 #     id_peoples=db.Column(db.Integer, db.ForeignKey('people.id'))
 #     people=db.relationship('People', backref='people1', lazy=True)
 #     id_user=db.Column(db.Integer, db.ForeignKey('user.id'))
-#     planet=db.relationship('User', backref='user1', lazy=True)
+#     planet=db.relationship('User', backref='user2', lazy=True)
 #     def __repr__(self):
 #             return '<Favorites %r>' % self.id
 
 #     def serialize(self):
 #         return {
-#             "id": self.id
+#             "id": self.id,
+#             "id_user": self.id_user,
+
+
 #         }
