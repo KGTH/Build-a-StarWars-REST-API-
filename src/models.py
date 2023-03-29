@@ -54,6 +54,8 @@ class Favorite_People(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "id_people":self.id_people,
+            "id_user":self.id_user
             
         }
 
@@ -68,24 +70,8 @@ class Favorite_Planet(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id
+            "id": self.id, 
+            "id_planets":self.id_planets,
+            "id_user":self.id_user
         }
 
-# class Favorites(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     id_planets=db.Column(db.Integer,db.ForeignKey('planet.id'))
-#     planet=db.relationship('Planet', backref='planet1', lazy=True)
-#     id_peoples=db.Column(db.Integer, db.ForeignKey('people.id'))
-#     people=db.relationship('People', backref='people1', lazy=True)
-#     id_user=db.Column(db.Integer, db.ForeignKey('user.id'))
-#     planet=db.relationship('User', backref='user2', lazy=True)
-#     def __repr__(self):
-#             return '<Favorites %r>' % self.id
-
-#     def serialize(self):
-#         return {
-#             "id": self.id,
-#             "id_user": self.id_user,
-
-
-#         }

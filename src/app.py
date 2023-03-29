@@ -79,12 +79,18 @@ def get_user():
     data=[user.serialize() for user in users]
     return jsonify(data),200
 
-@app.route('/users/favorites/<int:id>', methods=['GET']) #pendiente de terminar 
+@app.route('/users/favorites/people/<int:id>', methods=['GET']) 
 def all_favorites(id):
-    favorite = Favorite_People.filter_by(id=id).first()
-    people = Favorite_People.filter_by(id=id).first
-   
-    return jsonify(data),200 
+    favorite = Favorite_People.query.filter_by(id_user=id)
+    data = [favorites.serialize() for favorites in favorite ]
+    return jsonify(data),200
+
+@app.route('/users/favorites/planet/<int:id>', methods=['GET'])
+def get_favorites_planets(id):
+    planet = Favorite_Planet.query.filter_by(id_user=id)
+
+    data=[planets.serialize() for planets in planet]
+    return jsonify(data),200
 
 @app.route('/favorite/planet/<int:id_planets>', methods=['POST'])
 def favorite_planet(id_planets):
